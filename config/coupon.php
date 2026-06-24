@@ -33,18 +33,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Redeemable morph map alias
-    |--------------------------------------------------------------------------
-    |
-    | If your app uses morph maps, set this to the registered alias for the
-    | redeemable model (e.g. User). Null = uses the fully-qualified class name
-    | (default Laravel behaviour).
-    |
-    */
-    'redeemable_morph_map' => null,
-
-    /*
-    |--------------------------------------------------------------------------
     | Admin route wiring
     |--------------------------------------------------------------------------
     |

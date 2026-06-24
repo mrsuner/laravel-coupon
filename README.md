@@ -52,7 +52,6 @@ The service provider is auto-discovered. It registers the migrations, the
 | --- | --- |
 | `generation.length / prefix / suffix / charset` | Auto-generated code format. Default: 8 unambiguous uppercase chars. |
 | `table_names.*` | Override table names if they collide with your schema. |
-| `redeemable_morph_map` | The morph alias for your redeemable model, if you use morph maps. |
 | `route.enabled` | Master switch for the admin API (default `true`). |
 | `route.prefix / name` | Where the admin API mounts and its route-name prefix. |
 | `route.middleware` | `null` = auto-detect (see below); or an explicit array. |
@@ -73,6 +72,11 @@ framework's route-model-binding middleware automatically.
 **Route gate.** Admin routes are skipped (every endpoint `404`s) when
 `config('coupon.route.enabled')` is false, or when the host defines
 `config('boilerplate.admin.enabled')` and sets it to false.
+
+**Redeemable morph maps.** The package follows Laravel's native polymorphic
+type handling. If you want redemption rows to store aliases instead of fully
+qualified model class names, register them in the host app with
+`Relation::morphMap()` or `Relation::enforceMorphMap()`.
 
 ## Public API — `CouponService`
 
