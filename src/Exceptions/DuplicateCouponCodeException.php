@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mrsuner\AdminCoupon\Exceptions;
+namespace Mrsuner\Coupon\Exceptions;
 
 use InvalidArgumentException;
 

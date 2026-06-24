@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mrsuner\AdminCoupon\Models;
+namespace Mrsuner\Coupon\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -31,7 +31,7 @@ class CouponRedemption extends Model
 
     public function getTable(): string
     {
-        return config('admin-coupon.table_names.coupon_redemptions', 'coupon_redemptions');
+        return config('coupon.table_names.coupon_redemptions', 'coupon_redemptions');
     }
 
     /**

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mrsuner\AdminCoupon\Http\Requests;
+namespace Mrsuner\Coupon\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -19,7 +19,7 @@ class StoreCouponRequest extends FormRequest
      */
     public function rules(): array
     {
-        $table = config('admin-coupon.table_names.coupon_codes', 'coupon_codes');
+        $table = config('coupon.table_names.coupon_codes', 'coupon_codes');
 
         return [
             'code'         => ['nullable', 'string', 'max:64', Rule::unique($table, 'code')],

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Mrsuner\AdminCoupon\Tests\Unit;
+namespace Mrsuner\Coupon\Tests\Unit;
 
-use Mrsuner\AdminCoupon\Models\CouponCode;
-use Mrsuner\AdminCoupon\Tests\TestCase;
-use Mrsuner\AdminCoupon\ValueObjects\ValidationResult;
+use Mrsuner\Coupon\Models\CouponCode;
+use Mrsuner\Coupon\Tests\TestCase;
+use Mrsuner\Coupon\ValueObjects\ValidationResult;
 
 class ValidationResultTest extends TestCase
 {

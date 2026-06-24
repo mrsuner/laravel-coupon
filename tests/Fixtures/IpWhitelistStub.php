@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mrsuner\AdminCoupon\Tests\Fixtures;
+namespace Mrsuner\Coupon\Tests\Fixtures;
 
 use Closure;
 use Illuminate\Http\Request;

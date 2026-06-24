@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Mrsuner\AdminCoupon\Exceptions;
+namespace Mrsuner\Coupon\Exceptions;
 
-use Mrsuner\AdminCoupon\ValueObjects\ValidationResult;
+use Mrsuner\Coupon\ValueObjects\ValidationResult;
 use RuntimeException;
 
 /**

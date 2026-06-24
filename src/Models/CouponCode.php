@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mrsuner\AdminCoupon\Models;
+namespace Mrsuner\Coupon\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -34,7 +34,7 @@ class CouponCode extends Model
 
     public function getTable(): string
     {
-        return config('admin-coupon.table_names.coupon_codes', 'coupon_codes');
+        return config('coupon.table_names.coupon_codes', 'coupon_codes');
     }
 
     /**

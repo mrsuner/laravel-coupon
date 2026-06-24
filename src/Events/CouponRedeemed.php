@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Mrsuner\AdminCoupon\Events;
+namespace Mrsuner\Coupon\Events;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Events\Dispatchable;
-use Mrsuner\AdminCoupon\Models\CouponCode;
-use Mrsuner\AdminCoupon\Models\CouponRedemption;
+use Mrsuner\Coupon\Models\CouponCode;
+use Mrsuner\Coupon\Models\CouponRedemption;
 
 /**
  * Fired after a successful redemption has been committed.

@@ -23,7 +23,7 @@ return [
     | Table names
     |--------------------------------------------------------------------------
     |
-    | Override if the host application has conflicting table names.
+    | Override if your application has conflicting table names.
     |
     */
     'table_names' => [
@@ -36,7 +36,7 @@ return [
     | Redeemable morph map alias
     |--------------------------------------------------------------------------
     |
-    | If the host app uses morph maps, set this to the registered alias for the
+    | If your app uses morph maps, set this to the registered alias for the
     | redeemable model (e.g. User). Null = uses the fully-qualified class name
     | (default Laravel behaviour).
     |
@@ -49,19 +49,24 @@ return [
     |--------------------------------------------------------------------------
     |
     | The package mounts its admin endpoints under this prefix and middleware
-    | stack. The defaults match the boilerplate admin module. Override the
-    | middleware here if your host app uses a different admin stack — this is
-    | also what the package's own test suite overrides.
+    | stack.
+    |
+    | enabled:    Master switch for the admin API. When false, no admin routes
+    |             are registered (every admin endpoint 404s). If the host also
+    |             defines `boilerplate.admin.enabled` and sets it to false, the
+    |             routes are likewise skipped.
+    |
+    | middleware: null = auto-detect. When the boilerplate's
+    |             App\Http\Middleware\InternalIpWhitelist class is present, the
+    |             full boilerplate admin stack is applied; otherwise the package
+    |             falls back to ['auth:sanctum'] so it works in any Laravel app.
+    |             Provide an explicit array to take full control.
     |
     */
     'route' => [
+        'enabled'    => true,
         'prefix'     => 'internal/admin/v1',
         'name'       => 'admin.',
-        'middleware' => [
-            'throttle:60,1',
-            'App\\Http\\Middleware\\InternalIpWhitelist',
-            'auth:sanctum',
-            'ability:admin',
-        ],
+        'middleware' => null,
     ],
 ];

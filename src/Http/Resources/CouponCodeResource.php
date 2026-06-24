@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Mrsuner\AdminCoupon\Http\Resources;
+namespace Mrsuner\Coupon\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Mrsuner\AdminCoupon\Models\CouponCode;
+use Mrsuner\Coupon\Models\CouponCode;
 
 /**
  * @mixin CouponCode

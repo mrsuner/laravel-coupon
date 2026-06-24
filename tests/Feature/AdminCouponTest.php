@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Mrsuner\AdminCoupon\Tests\Feature;
+namespace Mrsuner\Coupon\Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
-use Mrsuner\AdminCoupon\Models\CouponCode;
-use Mrsuner\AdminCoupon\Services\CouponService;
-use Mrsuner\AdminCoupon\Tests\Fixtures\User;
-use Mrsuner\AdminCoupon\Tests\TestCase;
+use Mrsuner\Coupon\Models\CouponCode;
+use Mrsuner\Coupon\Services\CouponService;
+use Mrsuner\Coupon\Tests\Fixtures\User;
+use Mrsuner\Coupon\Tests\TestCase;
 use Orchestra\Testbench\Attributes\DefineEnvironment;
 
 class AdminCouponTest extends TestCase
@@ -258,8 +258,21 @@ class AdminCouponTest extends TestCase
         $this->getJson(self::BASE.'/coupons')->assertNotFound();
     }
 
+    #[DefineEnvironment('disablePackageRoutes')]
+    public function test_routes_return_404_when_package_route_disabled(): void
+    {
+        $this->actingAsAdmin();
+
+        $this->getJson(self::BASE.'/coupons')->assertNotFound();
+    }
+
     protected function disableAdminModule($app): void
     {
         $app['config']->set('boilerplate.admin.enabled', false);
+    }
+
+    protected function disablePackageRoutes($app): void
+    {
+        $app['config']->set('coupon.route.enabled', false);
     }
 }

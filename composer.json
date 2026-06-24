@@ -1,6 +1,6 @@
 {
-    "name": "mrsuner/laravel-admin-coupon",
-    "description": "Coupon lifecycle management (generation, validation, redemption) for Laravel — an official companion package for mrsuner/laravel-api-boilerplate.",
+    "name": "mrsuner/laravel-coupon",
+    "description": "Coupon lifecycle management (generation, validation, redemption) for Laravel, decoupled from billing via a single event. Works standalone and auto-wires into mrsuner/laravel-api-boilerplate.",
     "keywords": ["laravel", "coupon", "discount", "redemption", "admin", "boilerplate"],
     "license": "MIT",
     "authors": [
@@ -19,14 +19,17 @@
         "laravel/sanctum": "^4.0",
         "phpunit/phpunit": "^11.0"
     },
+    "suggest": {
+        "laravel/sanctum": "Required for the default admin-API authentication (auth:sanctum / ability:admin)."
+    },
     "autoload": {
         "psr-4": {
-            "Mrsuner\\AdminCoupon\\": "src/"
+            "Mrsuner\\Coupon\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Mrsuner\\AdminCoupon\\Tests\\": "tests/"
+            "Mrsuner\\Coupon\\Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -38,7 +41,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Mrsuner\\AdminCoupon\\CouponServiceProvider"
+                "Mrsuner\\Coupon\\CouponServiceProvider"
             ]
         }
     },

@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Mrsuner\AdminCoupon;
+namespace Mrsuner\Coupon;
 
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Sanctum\Http\Middleware\CheckForAnyAbility;
-use Mrsuner\AdminCoupon\Services\CouponService;
+use Mrsuner\Coupon\Services\CouponService;
 
 class CouponServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/admin-coupon.php', 'admin-coupon');
+        $this->mergeConfigFrom(__DIR__.'/../config/coupon.php', 'coupon');
 
         $this->app->singleton(CouponService::class);
     }
@@ -25,8 +25,8 @@ class CouponServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
         $this->publishes([
-            __DIR__.'/../config/admin-coupon.php' => config_path('admin-coupon.php'),
-        ], 'admin-coupon-config');
+            __DIR__.'/../config/coupon.php' => config_path('coupon.php'),
+        ], 'coupon-config');
 
         $this->registerMiddlewareAliases();
         $this->registerRoutes();
@@ -52,22 +52,59 @@ class CouponServiceProvider extends ServiceProvider
 
     private function registerRoutes(): void
     {
-        // Only mount routes if the boilerplate admin module is enabled.
+        // Double gate: the package's own switch, plus the boilerplate admin
+        // master switch when the host application defines it.
+        if (! config('coupon.route.enabled', true)) {
+            return;
+        }
+
         if (! config('boilerplate.admin.enabled', true)) {
             return;
         }
 
-        // Ensure implicit route-model binding works regardless of how the host
-        // wires the admin middleware stack (the configured stack may not include
-        // the framework's binding substitution middleware).
+        // Ensure implicit route-model binding works regardless of how the
+        // admin middleware stack is wired (a custom stack may not include the
+        // framework's binding substitution middleware).
         $middleware = array_merge(
-            (array) config('admin-coupon.route.middleware', []),
+            $this->resolveRouteMiddleware(),
             [SubstituteBindings::class],
         );
 
-        Route::prefix(config('admin-coupon.route.prefix', 'internal/admin/v1'))
+        Route::prefix(config('coupon.route.prefix', 'internal/admin/v1'))
             ->middleware($middleware)
-            ->name(config('admin-coupon.route.name', 'admin.'))
+            ->name(config('coupon.route.name', 'admin.'))
             ->group(__DIR__.'/../routes/admin.php');
+    }
+
+    /**
+     * Resolve the admin middleware stack.
+     *
+     * An explicit `coupon.route.middleware` array always wins. When it is null
+     * (the default), the stack is auto-detected: the full boilerplate admin
+     * stack when its IP-whitelist middleware is present, otherwise a minimal
+     * Sanctum-authenticated stack so the package works in any Laravel app.
+     *
+     * @return array<int, string>
+     */
+    private function resolveRouteMiddleware(): array
+    {
+        $configured = config('coupon.route.middleware');
+
+        if (is_array($configured)) {
+            return $configured;
+        }
+
+        $boilerplateIpWhitelist = 'App\\Http\\Middleware\\InternalIpWhitelist';
+
+        if (class_exists($boilerplateIpWhitelist)) {
+            return [
+                'throttle:60,1',
+                $boilerplateIpWhitelist,
+                'auth:sanctum',
+                'ability:admin',
+            ];
+        }
+
+        return ['auth:sanctum'];
     }
 }

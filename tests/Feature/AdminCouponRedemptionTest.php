@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Mrsuner\AdminCoupon\Tests\Feature;
+namespace Mrsuner\Coupon\Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
-use Mrsuner\AdminCoupon\Services\CouponService;
-use Mrsuner\AdminCoupon\Tests\Fixtures\User;
-use Mrsuner\AdminCoupon\Tests\TestCase;
+use Mrsuner\Coupon\Services\CouponService;
+use Mrsuner\Coupon\Tests\Fixtures\User;
+use Mrsuner\Coupon\Tests\TestCase;
 
 class AdminCouponRedemptionTest extends TestCase
 {

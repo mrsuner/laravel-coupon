@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mrsuner\AdminCoupon\Http\Requests;
+namespace Mrsuner\Coupon\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 

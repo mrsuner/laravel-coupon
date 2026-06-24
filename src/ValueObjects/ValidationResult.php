@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Mrsuner\AdminCoupon\ValueObjects;
+namespace Mrsuner\Coupon\ValueObjects;
 
-use Mrsuner\AdminCoupon\Models\CouponCode;
+use Mrsuner\Coupon\Models\CouponCode;
 
 /**
  * Immutable result of a coupon validation check.

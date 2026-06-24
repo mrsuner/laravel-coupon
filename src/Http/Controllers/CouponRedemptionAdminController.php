@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Mrsuner\AdminCoupon\Http\Controllers;
+namespace Mrsuner\Coupon\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Mrsuner\AdminCoupon\Http\Resources\CouponRedemptionResource;
-use Mrsuner\AdminCoupon\Models\CouponRedemption;
+use Mrsuner\Coupon\Http\Resources\CouponRedemptionResource;
+use Mrsuner\Coupon\Models\CouponRedemption;
 
 class CouponRedemptionAdminController extends Controller
 {

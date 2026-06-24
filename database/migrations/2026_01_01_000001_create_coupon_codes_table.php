@@ -62,6 +62,6 @@ return new class extends Migration
 
     private function table(): string
     {
-        return config('admin-coupon.table_names.coupon_codes', 'coupon_codes');
+        return config('coupon.table_names.coupon_codes', 'coupon_codes');
     }
 };

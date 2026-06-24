@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Mrsuner\AdminCoupon\Http\Controllers;
+namespace Mrsuner\Coupon\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Mrsuner\AdminCoupon\Http\Requests\BulkCouponRequest;
-use Mrsuner\AdminCoupon\Http\Requests\StoreCouponRequest;
-use Mrsuner\AdminCoupon\Http\Requests\UpdateCouponRequest;
-use Mrsuner\AdminCoupon\Http\Resources\CouponCodeResource;
-use Mrsuner\AdminCoupon\Http\Resources\CouponRedemptionResource;
-use Mrsuner\AdminCoupon\Models\CouponCode;
-use Mrsuner\AdminCoupon\Services\CouponService;
+use Mrsuner\Coupon\Http\Requests\BulkCouponRequest;
+use Mrsuner\Coupon\Http\Requests\StoreCouponRequest;
+use Mrsuner\Coupon\Http\Requests\UpdateCouponRequest;
+use Mrsuner\Coupon\Http\Resources\CouponCodeResource;
+use Mrsuner\Coupon\Http\Resources\CouponRedemptionResource;
+use Mrsuner\Coupon\Models\CouponCode;
+use Mrsuner\Coupon\Services\CouponService;
 
 class CouponAdminController extends Controller
 {

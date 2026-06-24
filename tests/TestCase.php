@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Mrsuner\AdminCoupon\Tests;
+namespace Mrsuner\Coupon\Tests;
 
 use Laravel\Sanctum\SanctumServiceProvider;
-use Mrsuner\AdminCoupon\CouponServiceProvider;
-use Mrsuner\AdminCoupon\Tests\Fixtures\IpWhitelistStub;
-use Mrsuner\AdminCoupon\Tests\Fixtures\User;
+use Mrsuner\Coupon\CouponServiceProvider;
+use Mrsuner\Coupon\Tests\Fixtures\IpWhitelistStub;
+use Mrsuner\Coupon\Tests\Fixtures\User;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
@@ -43,7 +43,7 @@ abstract class TestCase extends BaseTestCase
         $config->set('boilerplate.admin.ip_whitelist.cidrs', ['100.64.0.0/10']);
 
         // Test route stack: IP stub + sanctum auth + admin ability (no throttle).
-        $config->set('admin-coupon.route.middleware', [
+        $config->set('coupon.route.middleware', [
             IpWhitelistStub::class,
             'auth:sanctum',
             'ability:admin',

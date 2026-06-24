@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
-use Mrsuner\AdminCoupon\Http\Controllers\CouponAdminController;
-use Mrsuner\AdminCoupon\Http\Controllers\CouponRedemptionAdminController;
+use Mrsuner\Coupon\Http\Controllers\CouponAdminController;
+use Mrsuner\Coupon\Http\Controllers\CouponRedemptionAdminController;
 
 /*
 | Mounted by CouponServiceProvider under the configured prefix

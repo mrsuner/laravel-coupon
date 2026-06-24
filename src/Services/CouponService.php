@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Mrsuner\AdminCoupon\Services;
+namespace Mrsuner\Coupon\Services;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use Mrsuner\AdminCoupon\Events\CouponRedeemed;
-use Mrsuner\AdminCoupon\Exceptions\CouponNotRedeemableException;
-use Mrsuner\AdminCoupon\Exceptions\DuplicateCouponCodeException;
-use Mrsuner\AdminCoupon\Models\CouponCode;
-use Mrsuner\AdminCoupon\Models\CouponRedemption;
-use Mrsuner\AdminCoupon\ValueObjects\ValidationResult;
+use Mrsuner\Coupon\Events\CouponRedeemed;
+use Mrsuner\Coupon\Exceptions\CouponNotRedeemableException;
+use Mrsuner\Coupon\Exceptions\DuplicateCouponCodeException;
+use Mrsuner\Coupon\Models\CouponCode;
+use Mrsuner\Coupon\Models\CouponRedemption;
+use Mrsuner\Coupon\ValueObjects\ValidationResult;
 
 /**
  * The single public entry point for coupon lifecycle operations.
@@ -182,7 +182,7 @@ class CouponService
 
     private function buildCode(?string $prefix = null): string
     {
-        $config  = config('admin-coupon.generation');
+        $config  = config('coupon.generation');
         $length  = max(1, (int) ($config['length'] ?? 8));
         $charset = (string) ($config['charset'] ?? 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789');
         $suffix  = (string) ($config['suffix'] ?? '');

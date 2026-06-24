@@ -1,4 +1,4 @@
-# laravel-admin-coupon
+# laravel-coupon
 
 Coupon lifecycle management for Laravel — generation, validation, and redemption
 recording. An official companion package for
@@ -22,18 +22,22 @@ What connects the package to your business logic is **one event class**
 (`CouponRedeemed`) and **one public service** (`CouponService`). Everything else is
 internal.
 
+Works in any Laravel application. When installed on top of
+[`mrsuner/laravel-api-boilerplate`](https://github.com/mrsuner/laravel-api-boilerplate)
+it auto-wires into the boilerplate's admin stack; on a plain Laravel app it
+falls back to a Sanctum-authenticated admin API (see Configuration).
+
 ## Requirements
 
 - PHP `^8.2`
 - Laravel `^11.0 | ^12.0`
-- For the admin API: the boilerplate admin stack
-  (`InternalIpWhitelist` + `auth:sanctum` + `ability:admin`).
+- `laravel/sanctum` for the default admin-API authentication.
 
 ## Installation
 
 ```bash
-composer require mrsuner/laravel-admin-coupon
-php artisan vendor:publish --tag=admin-coupon-config
+composer require mrsuner/laravel-coupon
+php artisan vendor:publish --tag=coupon-config
 php artisan migrate
 ```
 
@@ -42,25 +46,38 @@ The service provider is auto-discovered. It registers the migrations, the
 
 ## Configuration
 
-`config/admin-coupon.php`:
+`config/coupon.php`:
 
 | Key | Description |
 | --- | --- |
 | `generation.length / prefix / suffix / charset` | Auto-generated code format. Default: 8 unambiguous uppercase chars. |
 | `table_names.*` | Override table names if they collide with your schema. |
 | `redeemable_morph_map` | The morph alias for your redeemable model, if you use morph maps. |
-| `route.prefix / name / middleware` | How the admin API is mounted. Defaults to the boilerplate admin stack. |
+| `route.enabled` | Master switch for the admin API (default `true`). |
+| `route.prefix / name` | Where the admin API mounts and its route-name prefix. |
+| `route.middleware` | `null` = auto-detect (see below); or an explicit array. |
 
-The admin routes are only mounted when `config('boilerplate.admin.enabled')` is
-truthy (default `true`). Setting it to `false` makes every package admin endpoint
-return `404`.
+**Admin middleware auto-detection.** When `route.middleware` is `null` (the
+default), the package picks a stack at boot:
+
+- If the boilerplate's `App\Http\Middleware\InternalIpWhitelist` class exists, it
+  uses the full boilerplate admin stack
+  (`throttle:60,1` + `InternalIpWhitelist` + `auth:sanctum` + `ability:admin`).
+- Otherwise (a plain Laravel app) it falls back to `['auth:sanctum']`.
+
+Set an explicit array to take full control. The package always appends the
+framework's route-model-binding middleware automatically.
+
+**Route gate.** Admin routes are skipped (every endpoint `404`s) when
+`config('coupon.route.enabled')` is false, or when the host defines
+`config('boilerplate.admin.enabled')` and sets it to false.
 
 ## Public API — `CouponService`
 
-Resolve it from the container: `app(\Mrsuner\AdminCoupon\Services\CouponService::class)`.
+Resolve it from the container: `app(\Mrsuner\Coupon\Services\CouponService::class)`.
 
 ```php
-use Mrsuner\AdminCoupon\Services\CouponService;
+use Mrsuner\Coupon\Services\CouponService;
 
 $coupons = app(CouponService::class);
 
@@ -115,7 +132,7 @@ public function __invoke(Request $request, CouponService $coupons): JsonResponse
 
 ```php
 // app/Providers/AppServiceProvider.php
-use Mrsuner\AdminCoupon\Events\CouponRedeemed;
+use Mrsuner\Coupon\Events\CouponRedeemed;
 use App\Listeners\ApplyCouponEffect;
 
 public function boot(): void

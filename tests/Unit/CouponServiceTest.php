@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Mrsuner\AdminCoupon\Tests\Unit;
+namespace Mrsuner\Coupon\Tests\Unit;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
-use Mrsuner\AdminCoupon\Events\CouponRedeemed;
-use Mrsuner\AdminCoupon\Exceptions\CouponNotRedeemableException;
-use Mrsuner\AdminCoupon\Exceptions\DuplicateCouponCodeException;
-use Mrsuner\AdminCoupon\Models\CouponCode;
-use Mrsuner\AdminCoupon\Models\CouponRedemption;
-use Mrsuner\AdminCoupon\Services\CouponService;
-use Mrsuner\AdminCoupon\Tests\Fixtures\User;
-use Mrsuner\AdminCoupon\Tests\TestCase;
-use Mrsuner\AdminCoupon\ValueObjects\ValidationResult;
+use Mrsuner\Coupon\Events\CouponRedeemed;
+use Mrsuner\Coupon\Exceptions\CouponNotRedeemableException;
+use Mrsuner\Coupon\Exceptions\DuplicateCouponCodeException;
+use Mrsuner\Coupon\Models\CouponCode;
+use Mrsuner\Coupon\Models\CouponRedemption;
+use Mrsuner\Coupon\Services\CouponService;
+use Mrsuner\Coupon\Tests\Fixtures\User;
+use Mrsuner\Coupon\Tests\TestCase;
+use Mrsuner\Coupon\ValueObjects\ValidationResult;
 use RuntimeException;
 
 class CouponServiceTest extends TestCase
@@ -39,8 +39,8 @@ class CouponServiceTest extends TestCase
     public function test_generates_unique_code_on_collision(): void
     {
         // Shrink the keyspace to 2 possible codes so the retry loop is exercised.
-        config()->set('admin-coupon.generation.length', 1);
-        config()->set('admin-coupon.generation.charset', 'AB');
+        config()->set('coupon.generation.length', 1);
+        config()->set('coupon.generation.charset', 'AB');
 
         $first  = $this->service()->generate(['type' => 'custom', 'value' => []]);
         $second = $this->service()->generate(['type' => 'custom', 'value' => []]);
