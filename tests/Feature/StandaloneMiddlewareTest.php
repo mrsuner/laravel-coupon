@@ -12,7 +12,7 @@ use Mrsuner\Coupon\Tests\TestCase;
 /**
  * Exercises the auto-detected admin middleware stack in a plain Laravel app
  * (no boilerplate InternalIpWhitelist present), where it should fall back to
- * ['auth:sanctum'] with no admin-ability requirement.
+ * ['auth:sanctum', 'ability:admin'].
  */
 class StandaloneMiddlewareTest extends TestCase
 {
@@ -28,11 +28,18 @@ class StandaloneMiddlewareTest extends TestCase
         $app['config']->set('coupon.route.middleware', null);
     }
 
-    public function test_any_authenticated_token_is_allowed(): void
+    public function test_admin_ability_token_is_allowed(): void
+    {
+        Sanctum::actingAs(User::factory()->create(), ['admin']);
+
+        $this->getJson(self::BASE.'/coupons')->assertOk();
+    }
+
+    public function test_authenticated_token_without_admin_ability_is_rejected(): void
     {
         Sanctum::actingAs(User::factory()->create(), ['no-special-abilities']);
 
-        $this->getJson(self::BASE.'/coupons')->assertOk();
+        $this->getJson(self::BASE.'/coupons')->assertForbidden();
     }
 
     public function test_unauthenticated_request_is_still_rejected(): void

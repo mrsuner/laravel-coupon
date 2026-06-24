@@ -82,7 +82,7 @@ class CouponServiceProvider extends ServiceProvider
      * An explicit `coupon.route.middleware` array always wins. When it is null
      * (the default), the stack is auto-detected: the full boilerplate admin
      * stack when its IP-whitelist middleware is present, otherwise a minimal
-     * Sanctum-authenticated stack so the package works in any Laravel app.
+     * Sanctum admin-ability stack so the package works in any Laravel app.
      *
      * @return array<int, string>
      */
@@ -112,6 +112,6 @@ class CouponServiceProvider extends ServiceProvider
             return $middleware;
         }
 
-        return ['auth:sanctum'];
+        return ['auth:sanctum', 'ability:admin'];
     }
 }

@@ -25,7 +25,7 @@ internal.
 Works in any Laravel application. When installed on top of
 [`mrsuner/laravel-api-boilerplate`](https://github.com/mrsuner/laravel-api-boilerplate)
 it auto-wires into the boilerplate's admin stack; on a plain Laravel app it
-falls back to a Sanctum-authenticated admin API (see Configuration).
+falls back to a Sanctum admin-ability API (see Configuration).
 
 ## Requirements
 
@@ -62,8 +62,10 @@ default), the package picks a stack at boot:
 
 - If the boilerplate's `App\Http\Middleware\InternalIpWhitelist` class exists, it
   uses the full boilerplate admin stack
-  (`throttle:60,1` + `InternalIpWhitelist` + `auth:sanctum` + `ability:admin`).
-- Otherwise (a plain Laravel app) it falls back to `['auth:sanctum']`.
+  (`throttle:60,1` + `InternalIpWhitelist` + `auth:sanctum` + `ability:admin`,
+  plus `EnsureAdminAccess` when available).
+- Otherwise (a plain Laravel app) it falls back to
+  `['auth:sanctum', 'ability:admin']`.
 
 Set an explicit array to take full control. The package always appends the
 framework's route-model-binding middleware automatically.
