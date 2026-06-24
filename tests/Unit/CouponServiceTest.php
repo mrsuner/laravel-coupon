@@ -174,6 +174,52 @@ class CouponServiceTest extends TestCase
         $this->assertSame(1, (int) $coupon->fresh()->times_redeemed);
     }
 
+    public function test_redeem_rejects_exhausted_coupon_without_writing(): void
+    {
+        $user   = User::factory()->create();
+        $coupon = $this->service()->generate([
+            'code'         => 'LIMIT',
+            'type'         => 'custom',
+            'value'        => [],
+            'restrictions' => ['max_uses' => 1],
+        ]);
+
+        $coupon->update(['times_redeemed' => 1]);
+
+        try {
+            $this->service()->redeem('LIMIT', $user);
+            $this->fail('Expected CouponNotRedeemableException.');
+        } catch (CouponNotRedeemableException $e) {
+            $this->assertSame(ValidationResult::EXHAUSTED, $e->getValidationResult()->error);
+        }
+
+        $this->assertSame(0, CouponRedemption::query()->count());
+        $this->assertSame(1, (int) $coupon->fresh()->times_redeemed);
+    }
+
+    public function test_redeem_rejects_per_user_limit_without_writing(): void
+    {
+        $user   = User::factory()->create();
+        $coupon = $this->service()->generate([
+            'code'         => 'USER-LIMIT',
+            'type'         => 'custom',
+            'value'        => [],
+            'restrictions' => ['per_user' => 1],
+        ]);
+
+        $this->service()->redeem('USER-LIMIT', $user);
+
+        try {
+            $this->service()->redeem('USER-LIMIT', $user);
+            $this->fail('Expected CouponNotRedeemableException.');
+        } catch (CouponNotRedeemableException $e) {
+            $this->assertSame(ValidationResult::USER_LIMIT, $e->getValidationResult()->error);
+        }
+
+        $this->assertSame(1, CouponRedemption::query()->count());
+        $this->assertSame(1, (int) $coupon->fresh()->times_redeemed);
+    }
+
     public function test_redeem_fires_coupon_redeemed_event(): void
     {
         Event::fake([CouponRedeemed::class]);

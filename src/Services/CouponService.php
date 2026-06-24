@@ -92,6 +92,11 @@ class CouponService
             return ValidationResult::invalid(ValidationResult::NOT_FOUND);
         }
 
+        return $this->validateCoupon($coupon, $redeemable);
+    }
+
+    private function validateCoupon(CouponCode $coupon, ?Model $redeemable = null): ValidationResult
+    {
         if (! $coupon->is_active) {
             return ValidationResult::invalid(ValidationResult::INACTIVE, $coupon);
         }
@@ -120,19 +125,23 @@ class CouponService
      */
     public function redeem(string $code, Model $redeemable, array $context = []): CouponRedemption
     {
-        $result = $this->validate($code, $redeemable);
+        $redemption = DB::transaction(function () use ($code, $redeemable, $context): CouponRedemption {
+            // Lock and validate the current row state so queued redemptions
+            // cannot reuse a stale pre-lock decision.
+            /** @var CouponCode|null $locked */
+            $locked = CouponCode::query()->where('code', $code)->lockForUpdate()->first();
 
-        if (! $result->valid) {
-            throw new CouponNotRedeemableException($result);
-        }
+            if ($locked === null) {
+                throw new CouponNotRedeemableException(
+                    ValidationResult::invalid(ValidationResult::NOT_FOUND),
+                );
+            }
 
-        /** @var CouponCode $coupon */
-        $coupon = $result->coupon;
+            $result = $this->validateCoupon($locked, $redeemable);
 
-        $redemption = DB::transaction(function () use ($coupon, $redeemable, $context): CouponRedemption {
-            // Lock the row so concurrent redemptions can't overshoot max_uses.
-            /** @var CouponCode $locked */
-            $locked = CouponCode::query()->whereKey($coupon->getKey())->lockForUpdate()->first();
+            if (! $result->valid) {
+                throw new CouponNotRedeemableException($result);
+            }
 
             $redemption = new CouponRedemption([
                 'snapshot' => [
@@ -153,7 +162,10 @@ class CouponService
         });
 
         // Refresh so the returned coupon/redemption reflect committed state.
-        $coupon->refresh();
+        $redemption->load('coupon');
+
+        /** @var CouponCode $coupon */
+        $coupon = $redemption->coupon;
 
         CouponRedeemed::dispatch($coupon, $redeemable, $redemption);
 
