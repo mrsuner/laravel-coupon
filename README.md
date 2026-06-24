@@ -94,13 +94,14 @@ $coupon = $coupons->generate([
 $codes = $coupons->generateBulk(50, ['code' => 'LAUNCH', 'type' => 'free_months', 'value' => ['months' => 1]]);
 
 // Validate without recording (returns a ValidationResult value object).
-$result = $coupons->validate('LAUNCH20', $user);
+// Pass amount_cents when the coupon has restrictions.min_amount.
+$result = $coupons->validate('LAUNCH20', $user, ['amount_cents' => 15_000]);
 if (! $result->valid) {
-    // $result->error is one of ValidationResult::NOT_FOUND|INACTIVE|EXPIRED|EXHAUSTED|USER_LIMIT
+    // $result->error is one of ValidationResult::NOT_FOUND|INACTIVE|EXPIRED|EXHAUSTED|USER_LIMIT|MIN_AMOUNT
 }
 
 // Validate, record, and fire CouponRedeemed (atomic).
-$redemption = $coupons->redeem('LAUNCH20', $user, ['ip' => request()->ip()]);
+$redemption = $coupons->redeem('LAUNCH20', $user, ['ip' => request()->ip(), 'amount_cents' => 15_000]);
 ```
 
 `redeem()` throws `CouponNotRedeemableException` when validation fails; the
@@ -117,14 +118,22 @@ Route::post('/redeem-coupon', RedeemCouponController::class)->middleware('auth:s
 // app/Http/Controllers/RedeemCouponController.php
 public function __invoke(Request $request, CouponService $coupons): JsonResponse
 {
-    $request->validate(['code' => ['required', 'string']]);
+    $request->validate([
+        'code' => ['required', 'string'],
+        'amount_cents' => ['nullable', 'integer', 'min:0'],
+    ]);
 
-    $result = $coupons->validate($request->code, $request->user());
+    $result = $coupons->validate($request->code, $request->user(), [
+        'amount_cents' => $request->integer('amount_cents'),
+    ]);
     if (! $result->valid) {
         return response()->json(['message' => __('coupon.'.$result->error)], 422);
     }
 
-    $redemption = $coupons->redeem($request->code, $request->user(), ['ip' => $request->ip()]);
+    $redemption = $coupons->redeem($request->code, $request->user(), [
+        'ip' => $request->ip(),
+        'amount_cents' => $request->integer('amount_cents'),
+    ]);
 
     return response()->json(['message' => 'Coupon applied.', 'redemption' => $redemption->id]);
 }

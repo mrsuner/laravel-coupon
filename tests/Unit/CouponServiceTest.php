@@ -148,6 +148,36 @@ class CouponServiceTest extends TestCase
         $this->assertSame(ValidationResult::USER_LIMIT, $result->error);
     }
 
+    public function test_validate_returns_min_amount_when_amount_is_missing_or_too_low(): void
+    {
+        $this->service()->generate([
+            'code'         => 'MIN',
+            'type'         => 'amount_off',
+            'value'        => ['amount' => 500],
+            'restrictions' => ['min_amount' => 10_000],
+        ]);
+
+        $missing = $this->service()->validate('MIN');
+        $tooLow = $this->service()->validate('MIN', context: ['amount_cents' => 9_999]);
+
+        $this->assertSame(ValidationResult::MIN_AMOUNT, $missing->error);
+        $this->assertSame(ValidationResult::MIN_AMOUNT, $tooLow->error);
+    }
+
+    public function test_validate_accepts_coupon_when_min_amount_is_met(): void
+    {
+        $this->service()->generate([
+            'code'         => 'ENOUGH',
+            'type'         => 'amount_off',
+            'value'        => ['amount' => 500],
+            'restrictions' => ['min_amount' => 10_000],
+        ]);
+
+        $result = $this->service()->validate('ENOUGH', context: ['amount_cents' => 10_000]);
+
+        $this->assertTrue($result->valid);
+    }
+
     public function test_redeem_creates_redemption_record(): void
     {
         $user = User::factory()->create();
@@ -218,6 +248,43 @@ class CouponServiceTest extends TestCase
 
         $this->assertSame(1, CouponRedemption::query()->count());
         $this->assertSame(1, (int) $coupon->fresh()->times_redeemed);
+    }
+
+    public function test_redeem_rejects_min_amount_without_writing(): void
+    {
+        $user   = User::factory()->create();
+        $coupon = $this->service()->generate([
+            'code'         => 'ORDER-MIN',
+            'type'         => 'amount_off',
+            'value'        => ['amount' => 500],
+            'restrictions' => ['min_amount' => 10_000],
+        ]);
+
+        try {
+            $this->service()->redeem('ORDER-MIN', $user, ['amount_cents' => 9_999]);
+            $this->fail('Expected CouponNotRedeemableException.');
+        } catch (CouponNotRedeemableException $e) {
+            $this->assertSame(ValidationResult::MIN_AMOUNT, $e->getValidationResult()->error);
+        }
+
+        $this->assertSame(0, CouponRedemption::query()->count());
+        $this->assertSame(0, (int) $coupon->fresh()->times_redeemed);
+    }
+
+    public function test_redeem_allows_min_amount_when_amount_is_met(): void
+    {
+        $user = User::factory()->create();
+        $this->service()->generate([
+            'code'         => 'ORDER-OK',
+            'type'         => 'amount_off',
+            'value'        => ['amount' => 500],
+            'restrictions' => ['min_amount' => 10_000],
+        ]);
+
+        $redemption = $this->service()->redeem('ORDER-OK', $user, ['amount_cents' => 10_000]);
+
+        $this->assertInstanceOf(CouponRedemption::class, $redemption);
+        $this->assertSame(['amount_cents' => 10_000], $redemption->context);
     }
 
     public function test_redeem_fires_coupon_redeemed_event(): void

@@ -19,6 +19,7 @@ final class ValidationResult
     public const EXPIRED    = 'expired';
     public const EXHAUSTED  = 'exhausted';
     public const USER_LIMIT = 'user_limit_reached';
+    public const MIN_AMOUNT = 'min_amount_not_met';
 
     private function __construct(
         public readonly bool $valid,

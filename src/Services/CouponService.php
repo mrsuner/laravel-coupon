@@ -84,7 +84,10 @@ class CouponService
     /**
      * Check whether a code can be redeemed, without recording a redemption.
      */
-    public function validate(string $code, ?Model $redeemable = null): ValidationResult
+    /**
+     * @param  array<string, mixed>  $context  Use amount_cents when validating min_amount.
+     */
+    public function validate(string $code, ?Model $redeemable = null, array $context = []): ValidationResult
     {
         $coupon = CouponCode::query()->where('code', $code)->first();
 
@@ -92,10 +95,13 @@ class CouponService
             return ValidationResult::invalid(ValidationResult::NOT_FOUND);
         }
 
-        return $this->validateCoupon($coupon, $redeemable);
+        return $this->validateCoupon($coupon, $redeemable, $context);
     }
 
-    private function validateCoupon(CouponCode $coupon, ?Model $redeemable = null): ValidationResult
+    /**
+     * @param  array<string, mixed>  $context
+     */
+    private function validateCoupon(CouponCode $coupon, ?Model $redeemable = null, array $context = []): ValidationResult
     {
         if (! $coupon->is_active) {
             return ValidationResult::invalid(ValidationResult::INACTIVE, $coupon);
@@ -111,6 +117,10 @@ class CouponService
 
         if ($redeemable !== null && ! $coupon->isUsableBy($redeemable)) {
             return ValidationResult::invalid(ValidationResult::USER_LIMIT, $coupon);
+        }
+
+        if (! $this->meetsMinimumAmount($coupon, $context)) {
+            return ValidationResult::invalid(ValidationResult::MIN_AMOUNT, $coupon);
         }
 
         return ValidationResult::valid($coupon);
@@ -137,7 +147,7 @@ class CouponService
                 );
             }
 
-            $result = $this->validateCoupon($locked, $redeemable);
+            $result = $this->validateCoupon($locked, $redeemable, $context);
 
             if (! $result->valid) {
                 throw new CouponNotRedeemableException($result);
@@ -175,6 +185,26 @@ class CouponService
     private function codeExists(string $code): bool
     {
         return CouponCode::query()->withTrashed()->where('code', $code)->exists();
+    }
+
+    /**
+     * @param  array<string, mixed>  $context
+     */
+    private function meetsMinimumAmount(CouponCode $coupon, array $context): bool
+    {
+        $minAmount = $coupon->restrictions['min_amount'] ?? null;
+
+        if ($minAmount === null) {
+            return true;
+        }
+
+        $amount = $context['amount_cents'] ?? null;
+
+        if (! is_int($amount) && ! (is_string($amount) && ctype_digit($amount))) {
+            return false;
+        }
+
+        return (int) $amount >= (int) $minAmount;
     }
 
     /**

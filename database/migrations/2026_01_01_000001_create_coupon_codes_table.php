@@ -37,7 +37,8 @@ return new class extends Migration
              *   max_uses   — total redemptions allowed across all users
              *   per_user   — max redemptions per unique redeemable
              *   expires_at — ISO 8601 datetime after which the code is invalid
-             *   min_amount — minimum transaction value in cents
+             *   min_amount — minimum transaction value in cents; redeem/validate
+             *                compares it to context.amount_cents
              */
             $table->json('restrictions')->nullable();
 

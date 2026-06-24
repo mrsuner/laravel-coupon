@@ -37,5 +37,6 @@ class ValidationResultTest extends TestCase
         $this->assertSame('expired', ValidationResult::EXPIRED);
         $this->assertSame('exhausted', ValidationResult::EXHAUSTED);
         $this->assertSame('user_limit_reached', ValidationResult::USER_LIMIT);
+        $this->assertSame('min_amount_not_met', ValidationResult::MIN_AMOUNT);
     }
 }
