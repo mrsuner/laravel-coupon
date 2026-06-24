@@ -95,14 +95,21 @@ class CouponServiceProvider extends ServiceProvider
         }
 
         $boilerplateIpWhitelist = 'App\\Http\\Middleware\\InternalIpWhitelist';
+        $boilerplateEnsureAdminAccess = 'App\\Http\\Middleware\\EnsureAdminAccess';
 
         if (class_exists($boilerplateIpWhitelist)) {
-            return [
+            $middleware = [
                 'throttle:60,1',
                 $boilerplateIpWhitelist,
                 'auth:sanctum',
                 'ability:admin',
             ];
+
+            if (class_exists($boilerplateEnsureAdminAccess)) {
+                $middleware[] = $boilerplateEnsureAdminAccess;
+            }
+
+            return $middleware;
         }
 
         return ['auth:sanctum'];
