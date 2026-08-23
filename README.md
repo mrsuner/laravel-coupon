@@ -30,7 +30,7 @@ falls back to a Sanctum admin-ability API (see Configuration).
 ## Requirements
 
 - PHP `^8.2`
-- Laravel `^11.0 | ^12.0`
+- Laravel `^12.0 | ^13.0`
 - `laravel/sanctum` for the default admin-API authentication.
 
 ## Installation
