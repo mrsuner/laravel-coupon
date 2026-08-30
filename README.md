@@ -4,6 +4,10 @@ Coupon lifecycle management for Laravel — generation, validation, and redempti
 recording. An official companion package for
 [`mrsuner/laravel-api-boilerplate`](https://github.com/mrsuner/laravel-api-boilerplate).
 
+[![Tests](https://github.com/mrsuner/laravel-coupon/actions/workflows/tests.yml/badge.svg)](https://github.com/mrsuner/laravel-coupon/actions/workflows/tests.yml)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/mrsuner/laravel-coupon.svg)](https://packagist.org/packages/mrsuner/laravel-coupon)
+[![License](https://img.shields.io/github/license/mrsuner/laravel-coupon)](LICENSE)
+
 ## Design philosophy
 
 This package owns the **coupon lifecycle only**. It has zero knowledge of billing
@@ -36,7 +40,7 @@ falls back to a Sanctum admin-ability API (see Configuration).
 ## Installation
 
 ```bash
-composer require mrsuner/laravel-coupon
+composer require mrsuner/laravel-coupon "^1.0"
 php artisan vendor:publish --tag=coupon-config
 php artisan migrate
 ```
@@ -224,4 +228,4 @@ The suite runs against `orchestra/testbench` with an in-memory SQLite database.
 
 ## License
 
-MIT.
+[MIT](LICENSE).

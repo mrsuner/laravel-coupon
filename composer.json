@@ -1,8 +1,14 @@
 {
     "name": "mrsuner/laravel-coupon",
+    "type": "library",
     "description": "Coupon lifecycle management (generation, validation, redemption) for Laravel, decoupled from billing via a single event. Works standalone and auto-wires into mrsuner/laravel-api-boilerplate.",
     "keywords": ["laravel", "coupon", "discount", "redemption", "admin", "boilerplate"],
     "license": "MIT",
+    "homepage": "https://github.com/mrsuner/laravel-coupon",
+    "support": {
+        "issues": "https://github.com/mrsuner/laravel-coupon/issues",
+        "source": "https://github.com/mrsuner/laravel-coupon"
+    },
     "authors": [
         {
             "name": "mrsuner"
