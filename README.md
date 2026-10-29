@@ -34,8 +34,12 @@ falls back to a Sanctum admin-ability API (see Configuration).
 ## Requirements
 
 - PHP `^8.2`
-- Laravel `^12.0 | ^13.0`
+- Laravel `^12.69 | ^13.30`
 - `laravel/sanctum` for the default admin-API authentication.
+
+## Development
+
+The committed lock file targets PHP 8.3 and Laravel 13. Run `composer install` and `composer test` for that baseline. CI separately resolves dependencies for each supported Laravel/PHP combination, including Laravel 12 on PHP 8.2.
 
 ## Installation
 
